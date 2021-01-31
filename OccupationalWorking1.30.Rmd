@@ -1,0 +1,104 @@
+---
+title: "Occupational Data"
+author: "Mary Hennigan" 
+date: "1/26/2021"
+output: pdf_document
+---
+
+# Compilation of Occupational COVID-19 Reports for Calculations
+
+- **This notebook retrieves data from a Google sheet and compiles a time series of ADH occupational infection reports**
+
+--**This 1/26 version created a time series from May 17 - Aug 20**
+
+-**It will create a masterfile: occupation_master.csv**
+
+# Part 1: Import Data, Clean It
+
+```{r include=FALSE}
+#install.packages("slider")
+#install.packages("zoo")
+#install.packages("gtools")
+# vignette("basic-usage", package="googlesheets")
+#install.packages("googledrive")
+#install.packages("googlesheets4")
+library(tidyverse)
+library(janitor)
+library(lubridate)
+library(googlesheets4)
+library(googledrive)
+library(tidyr)
+library(jsonlite)
+library(gtools)
+library(zoo)
+library(reshape2)
+library(slider)
+```
+
+#Import data from Hard Drive 
+```{r}
+ occupation5_25 <- rio::import("/Users/maryhennigan/Downloads/OSHA Project 2021/OccupationMaster.xlsx", which = "525 Occupational")
+```
+
+#Wells 
+```{r}
+ # occupation5_25 <- rio::import("/Users/rswells/Dropbox/Classes/Data Spring 2021/Facilities-Occupational Cases-Deaths.xlsx", which = "525 Occupational")
+
+
+```
+
+
+#This section for building the table from individual sheets
+```{r include=FALSE}
+ occupation5_25 <- rio::import("Facilities-Occupational Cases-Deaths.xlsx", which = "525 Occupational")
+ occupation5_29 <- rio::import("Facilities-Occupational Cases-Deaths.xlsx", which = "529 Occupational")
+ occupation6_2 <- rio::import("Facilities-Occupational Cases-Deaths.xlsx", which = "62 Occupational")
+ occupation5_25$date <- "2020-5-25"
+ occupation5_29$date <- "2020-5-29"
+ occupation6_2$date <- "2020-6-2"
+ occupation6_5 <- rio::import("Facilities-Occupational Cases-Deaths.xlsx", which = "65 Occupational")
+ occupation6_9 <- rio::import("Facilities-Occupational Cases-Deaths.xlsx", which = "69 Occupational")
+ occupation6_12 <- rio::import("Facilities-Occupational Cases-Deaths.xlsx", which = "612 Occupational")
+ occupation6_14 <- rio::import("Facilities-Occupational Cases-Deaths.xlsx", which = "614 Occupational")
+ occupation6_18 <- rio::import("Facilities-Occupational Cases-Deaths.xlsx", which = "618 Occupational")
+ occupation6_5$date <- "2020-6-05"
+ occupation6_9$date <- "2020-6-09"
+ occupation6_12$date <- "2020-6-12"
+ occupation6_14$date <- "2020-6-14"
+ occupation6_18$date <- "2020-6-18"
+ occupation6_25 <- rio::import("Facilities-Occupational Cases-Deaths.xlsx", which = "625 Occupational")
+ occupation6_28 <- rio::import("Facilities-Occupational Cases-Deaths.xlsx", which = "628 Occupational")
+ occupation7_3 <- rio::import("Facilities-Occupational Cases-Deaths.xlsx", which = "73 Occupational")
+ occupation7_6 <- rio::import("Facilities-Occupational Cases-Deaths.xlsx", which = "76 Occupational")
+ occupation6_25$date <- "2020-6-25"
+ occupation6_28$date <- "2020-6-28"
+ occupation7_3$date <- "2020-7-03"
+ occupation7_6$date <- "2020-7-06"
+ occupation7_14 <- rio::import("Facilities-Occupational Cases-Deaths.xlsx", which = "714 Occupational")
+ occupation7_21 <- rio::import("Facilities-Occupational Cases-Deaths.xlsx", which = "721 Occupational")
+ occupation7_24 <- rio::import("Facilities-Occupational Cases-Deaths.xlsx", which = "724 Occupational")
+ occupation8_3 <- rio::import("Facilities-Occupational Cases-Deaths.xlsx", which = "83 Occupational")
+ occupation8_7 <- rio::import("Facilities-Occupational Cases-Deaths.xlsx", which = "87 Occupational")
+ occupation7_14$date <- "2020-7-14"
+ occupation7_21$date <- "2020-7-21"
+ occupation7_24$date <- "2020-7-24"
+ occupation8_3$date <- "2020-8-03"
+ occupation8_7$date <- "2020-8-07"
+ occupation8_10 <- rio::import("Facilities-Occupational Cases-Deaths.xlsx", which = "810 Occupational")
+ occupation8_20 <- rio::import("Facilities-Occupational Cases-Deaths.xlsx", which = "820 Occupational")
+ occupation8_10$date <- "2020-8-10"
+ occupation8_20$date <- "2020-8-20"
+```
+
+
+```{r}
+glimpse(occupation5_25)
+```
+
+```{r warning=FALSE}
+occupation_master <- smartbind(occupation5_25, occupation5_29, occupation6_2, occupation6_5, occupation6_12, occupation6_14, occupation6_18, occupation6_25, occupation6_28, occupation6_9, occupation7_14, occupation7_21, occupation7_24, occupation7_3, occupation7_6, occupation8_10, occupation8_20, occupation8_3, occupation8_7)
+
+occupation_master
+```
+
+
